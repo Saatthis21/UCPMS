@@ -16,9 +16,7 @@ return new class extends Migration
             $table->integer('budget_year');
 
             $table->decimal('allocated_amount', 15, 2);
-
             $table->decimal('used_amount', 15, 2)->default(0);
-
             $table->decimal('reserved_amount', 15, 2)->default(0);
 
             $table->timestamps();
@@ -26,8 +24,6 @@ return new class extends Migration
             $table->foreign('ptj_id')
                 ->references('ptj_id')
                 ->on('ptj_departments');
-
-            $table->unique(['ptj_id', 'budget_year']);
         });
     }
 

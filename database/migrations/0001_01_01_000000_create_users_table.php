@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id('user_id');
+
+            $table->unsignedBigInteger('ptj_id')->nullable();
 
             $table->string('staff_id', 50)->unique();
             $table->string('user_name', 100);
@@ -32,6 +31,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('ptj_id')
+                ->references('ptj_id')
+                ->on('ptj_departments')
+                ->nullOnDelete();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -52,9 +56,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sessions');
