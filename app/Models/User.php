@@ -2,48 +2,75 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
-        'name',
+        'ptj_id',
+        'staff_id',
+        'user_name',
         'email',
+        'user_phone_number',
+        'role',
         'password',
+        'is_active',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function ptjDepartment(): BelongsTo
+    {
+        return $this->belongsTo(PtjDepartment::class, 'ptj_id', 'ptj_id');
+    }
+
+    public function procurementRequests(): HasMany
+    {
+        return $this->hasMany(ProcurementRequest::class, 'user_id', 'user_id');
+    }
+
+    public function approvals(): HasMany
+    {
+        return $this->hasMany(Approval::class, 'user_id', 'user_id');
+    }
+
+    public function deliveryOrders(): HasMany
+    {
+        return $this->hasMany(DeliveryOrder::class, 'user_id', 'user_id');
+    }
+
+    public function uploadedInvoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'user_id', 'user_id');
+    }
+
+    public function paidInvoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'marked_paid_by', 'user_id');
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'user_id', 'user_id');
     }
 }
