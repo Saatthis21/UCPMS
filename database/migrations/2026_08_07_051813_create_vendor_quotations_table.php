@@ -14,14 +14,17 @@ return new class extends Migration
             $table->unsignedBigInteger('procurement_request_id');
             $table->unsignedBigInteger('vendor_id');
 
+            // Added based on updated UCPMS requirement
+            $table->string('quotation_reference_number', 100);
+            $table->date('quotation_date');
+
             $table->decimal('total_amount', 15, 2);
 
+            // Each vendor quotation has its own PDF
             $table->string('quotation_file_path', 255);
 
             $table->integer('warranty_period')->nullable();
-
             $table->integer('delivery_lead_time')->nullable();
-
             $table->string('payment_terms', 255)->nullable();
 
             $table->timestamps();
@@ -34,17 +37,39 @@ return new class extends Migration
                 ->references('vendor_id')
                 ->on('vendors');
 
-            // Prevent the same vendor being added twice
-            // to the same procurement request.
+            // Prevent same vendor being selected twice
+            // for the same procurement request
             $table->unique([
                 'procurement_request_id',
                 'vendor_id'
             ]);
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Selected quotation FK
+        |--------------------------------------------------------------------------
+        | procurement_requests is created before vendor_quotations.
+        | Therefore we add this FK only AFTER vendor_quotations exists.
+        */
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->foreign('selected_quotation_id')
+                ->references('quotation_id')
+                ->on('vendor_quotations')
+                ->nullOnDelete();
+        });
     }
 
     public function down(): void
     {
+        /*
+        | Remove this FK first because procurement_requests
+        | depends on vendor_quotations.
+        */
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->dropForeign(['selected_quotation_id']);
+        });
+
         Schema::dropIfExists('vendor_quotations');
     }
 };

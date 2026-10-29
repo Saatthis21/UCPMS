@@ -12,6 +12,8 @@ class VendorQuotation extends Model
     protected $fillable = [
         'procurement_request_id',
         'vendor_id',
+        'quotation_reference_number',
+        'quotation_date',
         'total_amount',
         'quotation_file_path',
         'warranty_period',
@@ -20,6 +22,7 @@ class VendorQuotation extends Model
     ];
 
     protected $casts = [
+        'quotation_date' => 'date',
         'total_amount' => 'decimal:2',
     ];
 
@@ -34,6 +37,10 @@ class VendorQuotation extends Model
 
     public function vendor(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class, 'vendor_id', 'vendor_id');
+        return $this->belongsTo(
+            Vendor::class,
+            'vendor_id',
+            'vendor_id'
+        );
     }
 }

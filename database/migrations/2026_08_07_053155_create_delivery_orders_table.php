@@ -18,11 +18,27 @@ return new class extends Migration
 
             $table->string('do_pdf_path', 255);
 
+            // Invoice is stored together with the delivery record
+            $table->string('invoice_pdf_path', 255)->nullable();
+
+            $table->enum('payment_status', [
+                'Pending',
+                'Paid'
+            ])->default('Pending');
+
             $table->date('delivery_date');
 
+            // Required by Manage Order Execution:
+            // PTJ rates vendor after delivery
             $table->tinyInteger('vendor_rating');
 
             $table->text('delivery_comments')->nullable();
+
+            $table->enum('delivery_order_status', [
+                'Matched',
+                'Incomplete',
+                'Disputed'
+            ]);
 
             $table->timestamps();
 
@@ -34,6 +50,7 @@ return new class extends Migration
                 ->references('user_id')
                 ->on('users');
 
+            // One delivery record per Local Order
             $table->unique('local_order_id');
         });
     }

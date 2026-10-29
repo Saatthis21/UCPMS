@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id('local_order_id');
 
             $table->unsignedBigInteger('procurement_request_id');
-            $table->unsignedBigInteger('vendor_id');
+
+            $table->unsignedBigInteger('selected_quotation_id');
 
             $table->string('lo_number', 50)->unique();
 
@@ -35,10 +36,11 @@ return new class extends Migration
                 ->references('procurement_request_id')
                 ->on('procurement_requests');
 
-            $table->foreign('vendor_id')
-                ->references('vendor_id')
-                ->on('vendors');
+            $table->foreign('selected_quotation_id')
+                ->references('quotation_id')
+                ->on('vendor_quotations');
 
+            // One Local Order per procurement request
             $table->unique('procurement_request_id');
         });
     }

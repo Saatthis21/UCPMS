@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('ai_recommendations', function (Blueprint $table) {
             $table->id('ai_recommendation_id');
 
-            $table->unsignedBigInteger('procurement_request_id');
+            $table->unsignedBigInteger('procurement_request_id')->unique();
 
-            $table->unsignedBigInteger('vendor_id')->nullable();
+            $table->unsignedBigInteger('recommended_quotation_id')->nullable();
 
             $table->text('justification_text')->nullable();
 
@@ -31,9 +31,10 @@ return new class extends Migration
                 ->references('procurement_request_id')
                 ->on('procurement_requests');
 
-            $table->foreign('vendor_id')
-                ->references('vendor_id')
-                ->on('vendors');
+            $table->foreign('recommended_quotation_id')
+                ->references('quotation_id')
+                ->on('vendor_quotations')
+                ->nullOnDelete();
         });
     }
 

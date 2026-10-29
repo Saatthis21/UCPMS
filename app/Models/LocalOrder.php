@@ -12,7 +12,7 @@ class LocalOrder extends Model
 
     protected $fillable = [
         'procurement_request_id',
-        'vendor_id',
+        'selected_quotation_id',
         'lo_number',
         'lo_date',
         'total_amount',
@@ -34,19 +34,21 @@ class LocalOrder extends Model
         );
     }
 
-    public function vendor(): BelongsTo
+    public function selectedQuotation(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class, 'vendor_id', 'vendor_id');
+        return $this->belongsTo(
+            VendorQuotation::class,
+            'selected_quotation_id',
+            'quotation_id'
+        );
     }
 
     public function deliveryOrder(): HasOne
     {
-        return $this->hasOne(DeliveryOrder::class, 'local_order_id', 'local_order_id');
+        return $this->hasOne(
+            DeliveryOrder::class,
+            'local_order_id',
+            'local_order_id'
+        );
     }
-
-    public function invoice(): HasOne
-    {
-        return $this->hasOne(Invoice::class, 'local_order_id', 'local_order_id');
-    }
-    
 }

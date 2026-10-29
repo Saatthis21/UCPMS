@@ -14,7 +14,7 @@ class Approval extends Model
     protected $fillable = [
         'procurement_request_id',
         'user_id',
-        'stage',
+        'approval_stage',
         'decision',
         'remarks',
     ];

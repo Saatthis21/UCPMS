@@ -5,56 +5,62 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Display the logged-in user's profile.
+     */
+    public function show(Request $request): View
+    {
+        $user = $request->user()->load('ptjDepartment');
+
+        return view('profile.show', [
+            'user' => $user,
+        ]);
+    }
+
+
+    /**
+     * Display the profile edit page.
      */
     public function edit(Request $request): View
     {
+        $user = $request->user()->load('ptjDepartment');
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
+
     /**
-     * Update the user's profile information.
+     * Update editable profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
 
-        Auth::logout();
+        $validated = $request->validated();
 
-        $user->delete();
+        $user->email = $validated['email'];
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $user->user_phone_number =
+            $validated['user_phone_number'] ?? null;
 
-        return Redirect::to('/');
+
+        // Only change password if user entered a new one.
+        if (!empty($validated['password'])) {
+            $user->password = $validated['password'];
+        }
+
+
+        $user->save();
+
+
+        return redirect()
+            ->route('profile.show')
+            ->with('status', 'profile-updated');
     }
 }

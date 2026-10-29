@@ -59,15 +59,6 @@ class User extends Authenticatable
         return $this->hasMany(DeliveryOrder::class, 'user_id', 'user_id');
     }
 
-    public function uploadedInvoices(): HasMany
-    {
-        return $this->hasMany(Invoice::class, 'user_id', 'user_id');
-    }
-
-    public function paidInvoices(): HasMany
-    {
-        return $this->hasMany(Invoice::class, 'marked_paid_by', 'user_id');
-    }
 
     public function auditLogs(): HasMany
     {

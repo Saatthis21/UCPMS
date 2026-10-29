@@ -11,7 +11,7 @@ class AiRecommendation extends Model
 
     protected $fillable = [
         'procurement_request_id',
-        'vendor_id',
+        'recommended_quotation_id',
         'justification_text',
         'api_status',
     ];
@@ -25,8 +25,12 @@ class AiRecommendation extends Model
         );
     }
 
-    public function vendor(): BelongsTo
+    public function recommendedQuotation(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class, 'vendor_id', 'vendor_id');
+        return $this->belongsTo(
+            VendorQuotation::class,
+            'recommended_quotation_id',
+            'quotation_id'
+        );
     }
 }

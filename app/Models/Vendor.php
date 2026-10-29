@@ -9,6 +9,7 @@ class Vendor extends Model
 {
     protected $primaryKey = 'vendor_id';
 
+
     protected $fillable = [
         'company_name',
         'ssm_number',
@@ -17,22 +18,21 @@ class Vendor extends Model
         'vendor_rating',
     ];
 
+
     protected $casts = [
         'vendor_rating' => 'decimal:2',
     ];
 
+
+    /**
+     * A vendor can submit quotations for many procurement requests.
+     */
     public function quotations(): HasMany
     {
-        return $this->hasMany(VendorQuotation::class, 'vendor_id', 'vendor_id');
-    }
-
-    public function aiRecommendations(): HasMany
-    {
-        return $this->hasMany(AiRecommendation::class, 'vendor_id', 'vendor_id');
-    }
-
-    public function localOrders(): HasMany
-    {
-        return $this->hasMany(LocalOrder::class, 'vendor_id', 'vendor_id');
+        return $this->hasMany(
+            VendorQuotation::class,
+            'vendor_id',
+            'vendor_id'
+        );
     }
 }

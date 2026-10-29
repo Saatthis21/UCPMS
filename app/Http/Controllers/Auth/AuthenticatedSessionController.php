@@ -28,7 +28,29 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        switch ($user->role) {
+            case 'ptj':
+                return redirect()->route('ptj.dashboard');
+
+            case 'kj':
+                return redirect()->route('kj.dashboard');
+
+            case 'bendahari':
+                return redirect()->route('bendahari.dashboard');
+
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+
+            default:
+                Auth::logout();
+
+                return redirect()->route('login')
+                    ->withErrors([
+                        'staff_id' => 'Your account role is invalid.',
+                    ]);
+        }
     }
 
     /**
@@ -42,6 +64,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

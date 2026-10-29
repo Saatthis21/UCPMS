@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('procurement_request_id');
             $table->unsignedBigInteger('user_id');
 
-            $table->enum('stage', [
+            $table->enum('approval_stage', [
                 'KJ',
                 'Bendahari'
             ]);
@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->text('remarks')->nullable();
 
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->foreign('procurement_request_id')
                 ->references('procurement_request_id')
